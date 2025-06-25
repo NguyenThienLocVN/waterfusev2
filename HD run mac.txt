@@ -1,0 +1,12 @@
+Kích hoạt môi trường ảo
+python3 -m venv venv
+
+source venv/bin/activate
+
+Cài đặt thư viện request
+pip install requests
+
+Chạy chương trình
+python3 main.py
+
+
