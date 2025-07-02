@@ -192,3 +192,8 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+/FTP_FILES/
+#  FTP_FILES is a directory that contains files uploaded via FTP. It is recommended to ignore
+
+/LOGS
