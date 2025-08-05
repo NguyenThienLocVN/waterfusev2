@@ -4,7 +4,7 @@ import requests
 from datetime import datetime
 
 # --- Cấu hình ---
-folder_path = r"FTP_FILES\TDCHIENGCONG1"   # Thư mục chứa file .txt
+folder_path = input("Nhập tên thư mục (ví dụ: FTP_FILES\\TDCHIENGCONG1): ").strip()
 log_path = r"LOGS\error_log.txt"
 processed_path = r"LOGS\processed_files.txt"
 
