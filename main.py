@@ -112,8 +112,8 @@ def process_folders():
 
 if __name__ == "__main__":
     while True:
-        print(f"\n Bắt đầu xử lý lúc {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         process_folders()
+        print(f"\n Bắt đầu xử lý lúc {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("Đợi 15 phút để chạy lại...")
         time.sleep(900)
 
