@@ -40,11 +40,19 @@ def process_folders():
                 with open(processed_path, "r", encoding="utf-8") as f:
                     processed_files = set(line.strip() for line in f if line.strip())
 
+            processed_folder_names = []
             for folder_path in folder_paths:
                 if not os.path.isdir(folder_path):
                     print(f"Thư mục không tồn tại: {folder_path}")
                     continue
                 print(f"📂 Đang xử lý thư mục: {folder_path}")
+                # Extract the folder name part after the last backslash
+                try:
+                    folder_name = os.path.basename(folder_path.rstrip('\\/'))
+                    processed_folder_names.append(folder_name)
+                except Exception:
+                    # Fallback to full path if basename extraction fails
+                    processed_folder_names.append(folder_path)
                 for filename in os.listdir(folder_path):
                     if not (filename.endswith(".txt") and filename.startswith("SL_")):
                         continue
@@ -109,11 +117,18 @@ def process_folders():
             print(f"Đăng nhập thất bại: {login_res.status_code} - {login_res.text}")
     except Exception as e:
         print(f"⚠️ Lỗi khi gửi request đăng nhập: {e}")
+    return processed_folder_names if 'processed_folder_names' in locals() else []
 
 if __name__ == "__main__":
     while True:
-        process_folders()
+        processed = process_folders()
         print(f"Bắt đầu xử lý lúc {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        if processed:
+            print("Các thư mục đã thực hiện đọc:")
+            for name in processed:
+                print(f"- {name}")
+        else:
+            print("Không có thư mục hợp lệ được đọc trong lần chạy này.")
         print("Đợi 15 phút để chạy lại...")
         print("============VUI LÒNG KHÔNG TẮT CỬA SỔ NÀY==============")
         time.sleep(900)
