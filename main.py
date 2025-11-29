@@ -22,6 +22,8 @@ folder_paths = [
     r"D:\FTP_files\TDNAMPIA",
     r"D:\FTP_files\TDCHIENGCONG1",
     r"D:\FTP_files\TDCHIENGCONG2",
+    r"D:\FTP_files\TDMUONGSANG",
+	r"D:\FTP_files\TLBANMONG",
 ]
 log_path = r"LOGS\error_log.txt"
 processed_path = r"LOGS\processed_files.txt"
