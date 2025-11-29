@@ -88,10 +88,10 @@ def process_folders():
                             with open(file_path, "r", encoding="utf-8") as file:
                                 for line_num, line in enumerate(file, start=1):
                                     parts = line.strip().split()
-                                    if len(parts) >= 3:
+                                    if len(parts) >= 5:
                                         station_code = parts[0]
-                                        raw_value = parts[2]
-                                        unit = parts[3]
+                                        raw_value = parts[1]  
+                                        unit = parts[2] 
                                         try:
                                             numeric_value = float(raw_value)
                                             value = int(numeric_value) if numeric_value.is_integer() else round(numeric_value, 2)
@@ -100,7 +100,7 @@ def process_folders():
                                                 "Time": time_iso,
                                                 "StationCode": station_code,
                                                 "Value": value,
-                                                "Unit": unit,  
+                                                "Unit": unit, 
                                                 "DeviceStatus": 0,
                                                 "Status": True
                                             })
