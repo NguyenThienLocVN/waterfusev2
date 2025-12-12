@@ -12,6 +12,10 @@ Install library
 ``` 
 pip install <package>
 ```
+or
+```
+pip install -r requirements.txt
+```
 
 Execute
 ``` 
