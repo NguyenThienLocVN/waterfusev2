@@ -42,13 +42,8 @@ FOLDER_PATHS = [
     r"D:\FTP_files\TDNAMCHANH",
     r"D:\FTP_files\TDSAPVIET",
     r"D:\FTP_files\TDPHIENGCON",
-
-    # Neu can xu ly cong trinh dac biet nay thi bo comment dong duoi.
-    # r"D:\FTP_files\NDDCTTAKIIVN",
 ]
 
-SPECIAL_CONSTRUCTION_FOLDER = r"D:\FTP_files\NDDCTTAKIIVN"
-SPECIAL_SUB_FOLDERS = ["TK01", "TK02", "TK03", "TK04"]
 
 BASE_DIR = Path(__file__).resolve().parent
 LOG_DIR = BASE_DIR / "LOGS"
@@ -327,49 +322,10 @@ def read_normal_file(file_path: str, filename: str, construction_code: str, time
     return items
 
 
-def read_special_file(file_path: str, filename: str, construction_code: str, time_iso: str) -> List[Dict[str, Any]]:
-    items: List[Dict[str, Any]] = []
-    append_item = items.append
 
-    with open(file_path, "r", encoding="utf-8-sig", errors="replace") as file:
-        for line_num, line in enumerate(file, start=1):
-            if not line.strip():
-                continue
-
-            parts = line.split()
-            if len(parts) < 3:
-                log_error(f"{filename} - dong {line_num}: Thieu cot, noi dung: {line.rstrip()}")
-                continue
-
-            value = normalize_value(parts[1], filename, line_num)
-            if value is None:
-                continue
-
-            append_item({
-                "ConstructionCode": construction_code,
-                "Time": time_iso,
-                "StationCode": parts[0],
-                "Value": value,
-                "Unit": parts[2],
-                "DeviceStatus": 0,
-                "Status": True,
-            })
-
-    return items
-
-
-def parse_file_info(filename: str, special: bool) -> Optional[Tuple[str, str]]:
+def parse_file_info(filename: str) -> Optional[Tuple[str, str]]:
     basename = os.path.splitext(filename)[0]
     name_parts = basename.split("_")
-
-    if special:
-        if len(name_parts) != 4:
-            print(f"Ten file dac biet khong hop le: {filename}")
-            log_error(f"Ten file dac biet khong hop le: {filename}")
-            return None
-
-        _, construction_code_main, sub_code, time_str = name_parts
-        return f"{construction_code_main}_{sub_code}", time_str
 
     if len(name_parts) != 3:
         print(f"Ten file khong hop le: {filename}")
@@ -386,14 +342,13 @@ def process_file(
     filename: str,
     processed_files: Set[str],
     processed_writer: IO[str],
-    special: bool = False,
 ) -> bool:
     if is_processed(file_path, filename, processed_files):
         if PRINT_SKIPPED_FILES:
             print(f"Da xu ly roi: {filename}")
         return False
 
-    file_info = parse_file_info(filename, special=special)
+    file_info = parse_file_info(filename)
     if not file_info:
         return False
 
@@ -402,10 +357,7 @@ def process_file(
     if not time_iso:
         return False
 
-    if special:
-        items = read_special_file(file_path, filename, construction_code, time_iso)
-    else:
-        items = read_normal_file(file_path, filename, construction_code, time_iso)
+    items = read_normal_file(file_path, filename, construction_code, time_iso)
 
     if not items:
         print(f"Khong co ban ghi hop le trong file {filename}")
@@ -439,7 +391,6 @@ def process_single_folder(
     folder_path: str,
     processed_files: Set[str],
     processed_writer: IO[str],
-    special: bool = False,
 ) -> Tuple[str, int]:
     folder_name = os.path.basename(folder_path.rstrip("\\/"))
 
@@ -454,7 +405,7 @@ def process_single_folder(
     try:
         candidate_files = iter_candidate_files(folder_path)
         for file_path, filename in candidate_files:
-            if process_file(session, file_path, filename, processed_files, processed_writer, special=special):
+            if process_file(session, file_path, filename, processed_files, processed_writer):
                 success_count += 1
 
     except OSError as exc:
@@ -476,16 +427,9 @@ def process_folders() -> List[Tuple[str, int]]:
 
     with PROCESSED_PATH.open("a", encoding="utf-8", errors="ignore", buffering=1) as processed_writer:
         for folder_path in FOLDER_PATHS:
-            if normalize_path(folder_path) == normalize_path(SPECIAL_CONSTRUCTION_FOLDER):
-                for sub in SPECIAL_SUB_FOLDERS:
-                    sub_folder = os.path.join(SPECIAL_CONSTRUCTION_FOLDER, sub)
-                    processed_results.append(
-                        process_single_folder(session, sub_folder, processed_files, processed_writer, special=True)
-                    )
-            else:
-                processed_results.append(
-                    process_single_folder(session, folder_path, processed_files, processed_writer, special=False)
-                )
+            processed_results.append(
+                process_single_folder(session, folder_path, processed_files, processed_writer)
+            )
 
     return processed_results
 
