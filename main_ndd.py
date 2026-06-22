@@ -16,32 +16,7 @@ from urllib3.util.retry import Retry
 # =========================
 
 FOLDER_PATHS = [
-    r"D:\FTP_files\TDNAMSOI",
-    r"D:\FTP_files\TDHANGDONGA1",
-    r"D:\FTP_files\TDMUONGHUNG",
-    r"D:\FTP_files\TDPACHIEN",
-    r"D:\FTP_files\TLBANMONG",
-    r"D:\FTP_files\TDSUOISAP1",
-    r"D:\FTP_files\TLCHIENGDONG",
-    r"D:\FTP_files\TDHANGDONGA",
-    r"D:\FTP_files\TDNAMHONG2",
-    r"D:\FTP_files\TDMUONGSANG2",
-    r"D:\FTP_files\TDNAMCHIM1A",
-    r"D:\FTP_files\TDNAMCHIEN2",
-    r"D:\FTP_files\TDNAMTRAI4",
-    r"D:\FTP_files\TDTATNGOANG",
-    r"D:\FTP_files\TDNAMBU",
-    r"D:\FTP_files\TDCHIENGCONG1",
-    r"D:\FTP_files\TDNAMCONG5",
-    r"D:\FTP_files\TDNAMGION",
-    r"D:\FTP_files\TDNAMPIA",
-    r"D:\FTP_files\TDCHIENGCONG2",
-    r"D:\FTP_files\TDNAMXA",
-    r"D:\FTP_files\TDNAMCONG4",
-    r"D:\FTP_files\TDXIMVANG2",
-    r"D:\FTP_files\TDNAMCHANH",
-    r"D:\FTP_files\TDSAPVIET",
-    r"D:\FTP_files\TDPHIENGCON",
+    r"D:\FTP_files\NDDGBST4000",
 ]
 
 
