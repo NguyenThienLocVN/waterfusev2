@@ -302,12 +302,34 @@ def parse_file_info(filename: str) -> Optional[Tuple[str, str]]:
     basename = os.path.splitext(filename)[0]
     name_parts = basename.split("_")
 
-    if len(name_parts) != 3:
+    # Ho tro dinh dang ten file moi:
+    #   SL_MaCongTrinh_TenHangMuc_YYYYMMDDHHMMSS.txt
+    # Khi do ConstructionCode = MaCongTrinh_TenHangMuc.
+    #
+    # Cach ghep name_parts[1:-1] giup van xu ly duoc truong hop
+    # TenHangMuc co them dau gach duoi, vi du:
+    #   SL_NDDGBST4000_GK_1_20260622220000.txt
+    #   ConstructionCode = NDDGBST4000_GK_1
+    #
+    # Dieu kien len(name_parts) >= 3 duoc giu de khong lam hong cac file cu
+    # dang SL_MaCongTrinh_YYYYMMDDHHMMSS.txt neu trong thu muc van con ton tai.
+    if len(name_parts) < 3 or name_parts[0] != "SL":
         print(f"Ten file khong hop le: {filename}")
-        log_error(f"Ten file khong hop le: {filename}")
+        log_error(
+            f"Ten file khong hop le: {filename}. "
+            "Can dang SL_MaCongTrinh_TenHangMuc_YYYYMMDDHHMMSS.txt "
+            "hoac SL_MaCongTrinh_YYYYMMDDHHMMSS.txt."
+        )
         return None
 
-    _, construction_code, time_str = name_parts
+    construction_code = "_".join(name_parts[1:-1])
+    time_str = name_parts[-1]
+
+    if not construction_code:
+        print(f"Ten file khong hop le: {filename}")
+        log_error(f"Ten file khong hop le: {filename}. Khong xac dinh duoc ConstructionCode.")
+        return None
+
     return construction_code, time_str
 
 
