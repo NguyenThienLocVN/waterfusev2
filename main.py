@@ -42,6 +42,9 @@ FOLDER_PATHS = [
     r"D:\FTP_files\TDNAMCHANH",
     r"D:\FTP_files\TDSAPVIET",
     r"D:\FTP_files\TDPHIENGCON",
+r"D:\FTP_files\TDTACO",
+    r"D:\FTP_files\TDNAMCONG3",
+    r"D:\FTP_files\TDSUOISAP3",
 ]
 
 
