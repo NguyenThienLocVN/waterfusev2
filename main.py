@@ -26,6 +26,7 @@ FOLDER_PATHS = [
     r"D:\FTP_files\TDHANGDONGA",
     r"D:\FTP_files\TDNAMHONG2",
     r"D:\FTP_files\TDMUONGSANG2",
+    r"D:\FTP_files\TDMUONGSANG3",
     r"D:\FTP_files\TDNAMCHIM1A",
     r"D:\FTP_files\TDNAMCHIEN2",
     r"D:\FTP_files\TDNAMTRAI4",
@@ -49,6 +50,10 @@ FOLDER_PATHS = [
     r"D:\FTP_files\TDSOVIN",
     r"D:\FTP_files\TDCHIENGNGAM",
     r"D:\FTP_files\TDNAMHONG1",
+    r"D:\FTP_files\TDTANIET",
+    r"D:\FTP_files\TDSONLA",
+    r"D:\FTP_files\TDMUONGBANG",
+    r"D:\FTP_files\TDCHIENGMUON",
 ]
 
 
@@ -379,6 +384,12 @@ def process_file(
 
 
 def iter_candidate_files(folder_path: str):
+    folder_name = os.path.basename(folder_path.rstrip("\\/")).upper()
+
+    # Rieng thu muc TDTANIET, file du lieu bat dau bang "14".
+    # Cac thu muc con lai van su dung tien to "SL_" nhu cu.
+    valid_prefixes = ("14",) if folder_name == "TDTANIET" else ("SL_",)
+
     try:
         with os.scandir(folder_path) as entries:
             for entry in entries:
@@ -386,7 +397,7 @@ def iter_candidate_files(folder_path: str):
                     continue
 
                 filename = entry.name
-                if filename.startswith("SL_") and filename.endswith(".txt"):
+                if filename.startswith(valid_prefixes) and filename.lower().endswith(".txt"):
                     yield entry.path, filename
 
     except OSError as exc:
