@@ -339,6 +339,9 @@ def read_normal_file(file_path: str, filename: str, construction_code: str, time
 
 
 
+INVALID_CODE_SUFFIXES = {"obsdata", "predata"}
+
+
 def parse_file_info(filename: str) -> Optional[Tuple[str, str]]:
     basename = os.path.splitext(filename)[0]
     name_parts = basename.split("_")
@@ -356,6 +359,20 @@ def parse_file_info(filename: str) -> Optional[Tuple[str, str]]:
         return None
 
     time_str = name_parts[-1]
+
+    # Phan ngay truoc timestamp phai la thanh phan hop le cua ConstructionCode
+    # (vi du TK01, TK02, TK03...). Neu la obsdata/predata thi day la
+    # file sai dinh dang va phai bo qua, khong doc noi dung/khong gui API.
+    code_suffix = name_parts[-2].strip().lower()
+    if code_suffix in INVALID_CODE_SUFFIXES:
+        message = (
+            f"Sai dinh dang ten file: {filename} - thanh phan truoc timestamp "
+            f"khong duoc la '{name_parts[-2]}'. Bo qua file."
+        )
+        print(message)
+        log_error(message)
+        return None
+
     construction_code = "_".join(name_parts[1:-1])
 
     if not construction_code:
