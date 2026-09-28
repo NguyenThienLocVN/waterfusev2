@@ -54,6 +54,10 @@ FOLDER_PATHS = [
     r"D:\FTP_files\TDSONLA",
     r"D:\FTP_files\TDMUONGBANG",
     r"D:\FTP_files\TDCHIENGMUON",
+    r"D:\FTP_files\TDNAMCHIEN",
+    r"D:\FTP_files\TDTOBUONG",
+    r"D:\FTP_files\TDDONGKHUA",
+    r"D:\FTP_files\NDDCTTAKIIVN",
 ]
 
 
@@ -339,12 +343,26 @@ def parse_file_info(filename: str) -> Optional[Tuple[str, str]]:
     basename = os.path.splitext(filename)[0]
     name_parts = basename.split("_")
 
-    if len(name_parts) != 3:
+    # Dinh dang tong quat:
+    #   <Prefix>_<ConstructionCode>_<YYYYMMDDHHMMSS>.txt
+    # ConstructionCode co the chua dau gach duoi, vi du:
+    #   SL_NDDCTTAKIIVN_TK01_20260928141515.txt
+    #   -> ConstructionCode = NDDCTTAKIIVN_TK01
+    # Cach tach tu ben phai nay van tuong thich voi ten cu:
+    #   SL_TDSONLA_20260928141515.txt -> TDSONLA
+    if len(name_parts) < 3:
         print(f"Ten file khong hop le: {filename}")
         log_error(f"Ten file khong hop le: {filename}")
         return None
 
-    _, construction_code, time_str = name_parts
+    time_str = name_parts[-1]
+    construction_code = "_".join(name_parts[1:-1])
+
+    if not construction_code:
+        print(f"Ten file khong hop le, thieu ConstructionCode: {filename}")
+        log_error(f"Ten file khong hop le, thieu ConstructionCode: {filename}")
+        return None
+
     return construction_code, time_str
 
 
@@ -391,6 +409,19 @@ def iter_candidate_files(folder_path: str):
     valid_prefixes = ("14",) if folder_name == "TDTANIET" else ("SL_",)
 
     try:
+        # NDDCTTAKIIVN co cau truc nhieu cap:
+        # NDDCTTAKIIVN\TKxx\YYYY\MM\DD\*.txt
+        # Quet de quy toan bo cac nhanh TK de khong phu thuoc so luong/ten TK
+        # va khong bo sot file ton dong cua cac ngay truoc.
+        if folder_name == "NDDCTTAKIIVN":
+            for root, dirnames, filenames in os.walk(folder_path):
+                dirnames.sort()
+                for filename in sorted(filenames):
+                    if filename.startswith(valid_prefixes) and filename.lower().endswith(".txt"):
+                        yield os.path.join(root, filename), filename
+            return
+
+        # Cac thu muc cu giu nguyen cach quet 1 cap nhu truoc.
         with os.scandir(folder_path) as entries:
             for entry in entries:
                 if not entry.is_file():
